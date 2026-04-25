@@ -7,6 +7,12 @@ export const getGames = () => {
   }).then(r => r.json())
 }
 
+export const getGame = (id) => {
+  return fetch(`${baseUrl}/games/${id}`, {
+    headers: getAuthHeader()
+  }).then(r => r.json())
+}
+
 export const createGame = (game) => {
   return fetch(`${baseUrl}/games`, {
     method: 'POST',

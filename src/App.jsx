@@ -5,6 +5,7 @@ import { Register } from './components/auth/Register.jsx'
 import { GameList } from './components/games/GameList.jsx'
 import { GameForm } from './components/games/GameForm.jsx'
 import { GameDetail } from './components/games/GameDetail.jsx'
+import { ReviewForm } from './components/reviews/ReviewForm.jsx'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path='/games' element={<GameList/>} />
           <Route path='/games/new' element={<GameForm/>} />
           <Route path='/games/:id' element={<GameDetail/>}/>
+          <Route path='/games/:gameId/review' element={<ReviewForm/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

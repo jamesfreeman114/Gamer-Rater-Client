@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
 import { getGame } from "../../services/gameService"
+
 
 export const GameDetail = () => {
     const { id } = useParams()
     const [game, setGame] = useState(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         getGame(id).then((data) => setGame(data))
@@ -45,6 +47,22 @@ export const GameDetail = () => {
                     <span className="font-semibold">Age Recommendation: </span>
                     <span>{game.age_recommendation}+</span>
                 </div>
+                <div>
+                    <span className="font-semibold">Reviews: </span>
+                    <div>
+                        {game.reviews.map((review) => (
+                            <p key={review.id}>{review.content}</p>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    onClick= {()=>navigate(`/games/${id}/review`)}>Leave a Review
+
+                    </button>
+                    
+                </div>
+
             </div>
         </div>
     )

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { getGame } from "../../services/gameService"
+import { createRating } from "../../services/ratingService"
 
 
 export const GameDetail = () => {
     const { id } = useParams()
     const [game, setGame] = useState(null)
+    const [rating, setRating] = useState(0)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -55,6 +57,26 @@ export const GameDetail = () => {
                         ))}
                     </div>
                 </div>
+                <div>
+                    <span className="font-semibold">Average Rating: </span>
+                    <span>{game.average_rating}</span>
+                </div>
+                <div className="flex gap-2 items-center">
+                    <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        value={rating}
+                        onChange={(e) => setRating(e.target.value)}
+                        className="border rounded px-2 py-1 w-20"
+                    />
+                    <button
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                        onClick={() => createRating({ game_id: id, rating: parseInt(rating) }).then(() => getGame(id).then(setGame))}
+                    >Rate Game
+                    </button>
+                </div>
+
                 <div>
                     <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                     onClick= {()=>navigate(`/games/${id}/review`)}>Leave a Review

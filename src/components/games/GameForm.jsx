@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { createGame } from '../../services/gameService'
+import { useNavigate, useParams } from 'react-router-dom'
+import { createGame, getGame, updateGame } from '../../services/gameService'
 import { getCategories } from '../../services/categoryService'
 
 export const GameForm = () => {
   const navigate = useNavigate()
+  const { gameId } = useParams()
 
   const [categories, setCategories] = useState([])
   const [game, setGame] = useState({
@@ -22,19 +23,40 @@ export const GameForm = () => {
     getCategories().then(setCategories)
   }, [])
 
+  useEffect(() => {
+    if (gameId) {
+      getGame(gameId).then((data) => {
+        setGame({
+          title: data.title,
+          description: data.description,
+          designer: data.designer,
+          year_released: data.year_released,
+          num_players: data.num_players,
+          estimated_time: data.estimated_time,
+          age_recommendation: data.age_recommendation,
+          category_id: data.category_id ?? ''
+        })
+      })
+    }
+  }, [gameId])
+
   const handleChange = (e) => {
     setGame({ ...game, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    createGame(game).then(() => navigate('/games'))
+    if (gameId) {
+      updateGame(gameId, game).then(() => navigate(`/games/${gameId}`))
+    } else {
+      createGame(game).then(() => navigate('/games'))
+    }
   }
 
   return (
     <div className="flex justify-center p-8">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-96">
-        <h1 className="text-2xl font-bold">Add a Game</h1>
+        <h1 className="text-2xl font-bold">{gameId ? 'Edit Game' : 'Add a Game'}</h1>
 
         <input
           type="text"

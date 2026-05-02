@@ -18,6 +18,7 @@ const App = () => {
           <Route path='/games/new' element={<GameForm/>} />
           <Route path='/games/:id' element={<GameDetail/>}/>
           <Route path='/games/:gameId/review' element={<ReviewForm/>}/>
+          <Route path='/games/:gameId/edit' element={<GameForm/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

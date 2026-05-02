@@ -20,6 +20,7 @@ export const Register = () => {
       .then(data => {
         if (data.token) {
           localStorage.setItem('auth_token', data.token)
+          localStorage.setItem('user_id', data.user_id)
           navigate('/games')
         }
       })

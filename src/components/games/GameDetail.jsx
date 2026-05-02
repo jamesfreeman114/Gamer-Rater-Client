@@ -2,13 +2,24 @@ import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { getGame } from "../../services/gameService"
 import { createRating } from "../../services/ratingService"
-
+import { createGamePicture } from "../../services/pictureService"
 
 export const GameDetail = () => {
     const { id } = useParams()
     const [game, setGame] = useState(null)
+    const currentUserId = parseInt(localStorage.getItem('user_id'))
     const [rating, setRating] = useState(0)
+    const [pictureString, setPictureString] = useState('')
     const navigate = useNavigate()
+
+    const createGameImageString = (e) => {
+        const file = e.target.files[0]
+        const reader = new FileReader()
+        reader.onloadend = () => {
+            setPictureString(reader.result)
+        }
+        reader.readAsDataURL(file)
+    }
 
     useEffect(() => {
         getGame(id).then((data) => setGame(data))
@@ -57,6 +68,22 @@ export const GameDetail = () => {
                         ))}
                     </div>
                 </div>
+
+                {game.pictures && game.pictures.length > 0 && (
+                    <div>
+                        <span className="font-semibold">Pictures: </span>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {game.pictures.map((pic) => (
+                                <img
+                                    key={pic.id}
+                                    src={`http://localhost:8000${pic.action_pic}`}
+                                    alt="Game action"
+                                    className="w-40 h-40 object-cover rounded"
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
                 <div>
                     <span className="font-semibold">Average Rating: </span>
                     <span>{game.average_rating}</span>
@@ -80,10 +107,32 @@ export const GameDetail = () => {
                 <div>
                     <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                     onClick= {()=>navigate(`/games/${id}/review`)}>Leave a Review
-
                     </button>
-                    
                 </div>
+                <div>
+
+                    <input type="file" id="game_image" onChange={createGameImageString} />
+                    <input type="hidden" name="game_id" value={game.id} />
+                    <button
+                        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+                        onClick={() => {
+                            if (!pictureString) return
+                            createGamePicture({ game_id: id, image: pictureString })
+                                .then(() => getGame(id).then(setGame))
+                        }}
+                    >Upload</button>
+                </div>
+
+                {game.user_id === currentUserId && (
+                    <div>
+                        <button
+                            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                            onClick={() => navigate(`/games/${id}/edit`)}
+                        >
+                            Edit Game
+                        </button>
+                    </div>
+                )}
 
             </div>
         </div>
